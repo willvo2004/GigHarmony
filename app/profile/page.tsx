@@ -2,9 +2,12 @@ import { Header } from "@/components/Header";
 import { checkUser } from "@/lib/data";
 import Image from "next/image";
 import { EditBackground } from "@/components/Modals/BackgroundImageModal";
+import { getProfile, updateProfile } from "@/lib/actions";
 
 export default async function Home() {
   const user = await checkUser();
+  const [profile] = await getProfile();
+  const { updateBackgroundFile, updateBackgroundUrl } = await updateProfile();
 
   return (
     <main className="h-screen">
@@ -12,7 +15,10 @@ export default async function Home() {
         <Header />
       </div>
       <section className="profile-banner container flex flex-col flex-1 px-24 py-6 w-full">
-        <div className="avatar w-full h-[15rem] border-2 rounded-lg bg-center relative bg-cover bg-[url('https://images.pexels.com/photos/531880/pexels-photo-531880.jpeg?cs=srgb&dl=pexels-pixabay-531880.jpg&fm=jpg')]">
+        <div
+          className={`avatar w-full h-[15rem] border-2 rounded-lg bg-center relative bg-cover`}
+          style={{ backgroundImage: `url(${profile.background_image})` }}
+        >
           <Image
             className="rounded-full border-2 border-black dark:border-white shadow-xl absolute top-36"
             src={user?.user_metadata.picture}
@@ -21,7 +27,10 @@ export default async function Home() {
             height={20}
           />
           <span className="absolute top-0 right-0">
-            <EditBackground />
+            <EditBackground
+              updateFile={updateBackgroundFile}
+              updateUrl={updateBackgroundUrl}
+            />
           </span>
         </div>
 

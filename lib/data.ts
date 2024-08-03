@@ -19,7 +19,7 @@ export async function checkProfile() {
 
   if (!user) {
     console.log("no user");
-    return null;
+    return;
   }
 
   let { data: profile, error } = await supabase
@@ -27,12 +27,12 @@ export async function checkProfile() {
     .select("*")
     .eq("user_id", user?.id);
 
-  if (!profile) {
+  if (!profile || profile.length === 0) {
     console.log("creating profile");
     createProfile(user);
     return null;
   }
-
+  console.log("profile returned", profile);
   return profile;
 }
 // if signed user does not have a row containing a their user id, create a profile
@@ -45,7 +45,8 @@ export async function createProfile(user: User | null) {
       {
         display_name: metaData.name,
         avatar: metaData.avatar_url,
-        background_image: null,
+        background_image:
+          "https://149366088.v2.pressablecdn.com/wp-content/uploads/2020/02/gnome-3.36-wallpaper-night.jpg",
         bio: null,
         user_id: user?.id,
       },
